@@ -7,7 +7,7 @@ python --version
 
 2. Clone the repository
 ```
-git clone https://github.com/SajjitStha/Snake-game.git
+git clone https://github.com/SajjitStha/CovidKiller.git
 ```
 
 3. Install the necessary requirements
