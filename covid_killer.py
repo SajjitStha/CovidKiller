@@ -32,8 +32,8 @@ enemyY = []
 enemyX_change = []
 enemyY_change = []
 enemy_health = []
-num_of_enemies = 3  # Set number of enemies to 3
-enemy_speed = 1  # Slower speed
+num_of_enemies = 4  # Set number of enemies to 3
+enemy_speed = 1.5  # Slower speed
 
 for i in range(num_of_enemies):
     enemyImg.append(pygame.image.load('virus.png'))
