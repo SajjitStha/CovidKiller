@@ -1,6 +1,5 @@
 import math
 import random
-
 import pygame
 from pygame import mixer
 
@@ -11,7 +10,7 @@ pygame.init()
 screen = pygame.display.set_mode((800, 600))
 
 # Background
-background = pygame.image.load('back.png')
+background = pygame.image.load('back1.jpg')
 
 # Caption and Icon
 pygame.display.set_caption("Covid Killer")
@@ -87,6 +86,9 @@ small_font = pygame.font.Font('freesansbold.ttf', 32)
 
 def show_score(x, y):
     score = font.render("Score : " + str(score_value), True, (255, 255, 255))
+    score_bg = pygame.Surface((score.get_width()+ 10, score.get_height() + 10))
+    score_bg.fill((50, 50, 50))
+    screen.blit(score_bg, (x - 5, y - 5))
     screen.blit(score, (x, y))
 
 def show_high_score(x, y):
@@ -136,11 +138,17 @@ def show_health_bar(x, y, health, is_player=True):
         pygame.draw.rect(screen, (255, 255, 255), (x, y, 50, 5))  # White background
         pygame.draw.rect(screen, (255, 0, 0), (x, y, health, 5))  # Red foreground
 
+# Create a Clock object to manage the frame rate
+clock = pygame.time.Clock()
+
 # Game Loop
 running = True
 game_over = False
 
 while running:
+
+    # Limit the frame rate to 60 frames per second
+    clock.tick(60)
 
     # RGB = Red, Green, Blue
     screen.fill((0, 0, 0))
@@ -180,9 +188,9 @@ while running:
         # If keystroke is pressed check whether it's right or left
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                playerX_change = -2
+                playerX_change = -3
             if event.key == pygame.K_RIGHT:
-                playerX_change = 2
+                playerX_change = 3
             if event.key == pygame.K_SPACE:
                 if bullet_state == "ready":
                     current_time = pygame.time.get_ticks()
