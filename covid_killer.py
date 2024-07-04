@@ -32,7 +32,7 @@ enemyY = []
 enemyX_change = []
 enemyY_change = []
 enemy_health = []
-num_of_enemies = 4  # Set number of enemies to 3
+num_of_enemies = 4  # Set number of enemies to 4
 enemy_speed = 1.5  # Slower speed
 
 for i in range(num_of_enemies):
@@ -74,12 +74,12 @@ for i in range(num_of_enemies):
     enemy_last_fire_time.append(0)
 
 # Score
-
 score_value = 0
+high_score = 0
 font = pygame.font.Font('freesansbold.ttf', 32)
 
 textX = 10
-testY = 10
+textY = 10
 
 # Game Over
 over_font = pygame.font.Font('freesansbold.ttf', 64)
@@ -89,6 +89,10 @@ def show_score(x, y):
     score = font.render("Score : " + str(score_value), True, (255, 255, 255))
     screen.blit(score, (x, y))
 
+def show_high_score(x, y):
+    high_score_text = font.render("High Score : " + str(high_score), True, (255, 255, 255))
+    screen.blit(high_score_text, (x, y))
+
 def game_over_screen():
     screen.fill((0, 0, 0))  # Fill the screen with black
     game_over_text = over_font.render("GAME OVER", True, (255, 255, 255))
@@ -96,6 +100,7 @@ def game_over_screen():
     restart_text = small_font.render("Press R to Restart or Q to Quit", True, (255, 255, 255))
     screen.blit(restart_text, (150, 350))
     show_score(300, 450)
+    show_high_score(300, 500)
     pygame.display.update()
 
 def player(x, y):
@@ -143,6 +148,8 @@ while running:
     screen.blit(background, (0, 0))
 
     if game_over:
+        if score_value > high_score:
+            high_score = score_value
         game_over_screen()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -260,5 +267,5 @@ while running:
 
     player(playerX, playerY)
     show_health_bar(playerX, playerY + 70, player_health)
-    show_score(textX, testY)
+    show_score(textX, textY)
     pygame.display.update()
