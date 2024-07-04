@@ -124,7 +124,7 @@ def isCollision(objX, objY, bulletX, bulletY):
 def show_health_bar(x, y, health, is_player=True):
     if is_player:
         # Player's health bar (white background, green foreground)
-        pygame.draw.rect(screen, (255, 255, 255), (x, y, 50, 5))  # White background
+        pygame.draw.rect(screen, (255, 255, 255), (x, y, 100, 5))  # White background
         pygame.draw.rect(screen, (0, 255, 0), (x, y, health, 5))  # Green foreground
     else:
         # Enemy's health bar (white background, red foreground)
