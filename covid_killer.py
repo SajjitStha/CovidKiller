@@ -94,7 +94,7 @@ def show_high_score(x, y):
     screen.blit(high_score_text, (x, y))
 
 def game_over_screen():
-    screen.fill((0, 0, 0))  # Fill the screen with black
+    screen.fill((1, 50,32))  # Fill the screen with black
     game_over_text = over_font.render("GAME OVER", True, (255, 255, 255))
     screen.blit(game_over_text, (200, 250))
     restart_text = small_font.render("Press R to Restart or Q to Quit", True, (255, 255, 255))
