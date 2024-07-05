@@ -43,10 +43,6 @@ for i in range(num_of_enemies):
     enemy_health.append(50)
 
 # Player Bullet
-
-# Ready - You can't see the bullet on the screen
-# Fire - The bullet is currently moving
-
 bulletImg = pygame.image.load('weather.png')
 bulletX = 0
 bulletY = 480
@@ -86,7 +82,7 @@ small_font = pygame.font.Font('freesansbold.ttf', 32)
 
 def show_score(x, y):
     score = font.render("Score : " + str(score_value), True, (255, 255, 255))
-    score_bg = pygame.Surface((score.get_width()+ 10, score.get_height() + 10))
+    score_bg = pygame.Surface((score.get_width() + 10, score.get_height() + 10))
     score_bg.fill((50, 50, 50))
     screen.blit(score_bg, (x - 5, y - 5))
     screen.blit(score, (x, y))
@@ -96,14 +92,15 @@ def show_high_score(x, y):
     screen.blit(high_score_text, (x, y))
 
 def game_over_screen():
-    screen.fill((1, 50,32))  # Fill the screen with black
+    screen.fill((0, 0, 0))  # Fill the screen with black
     game_over_text = over_font.render("GAME OVER", True, (255, 255, 255))
     screen.blit(game_over_text, (200, 250))
-    restart_text = small_font.render("Press R to Restart or Q to Quit", True, (255, 255, 255))
-    screen.blit(restart_text, (150, 350))
+    restart_button = create_button("Restart", 150, 350, 200, 50)
+    quit_button = create_button("Quit", 450, 350, 200, 50)
     show_score(300, 450)
     show_high_score(300, 500)
     pygame.display.update()
+    return restart_button, quit_button
 
 def player(x, y):
     screen.blit(playerImg, (x, y))
@@ -123,10 +120,7 @@ def fire_enemy_bullet(x, y, i):
 
 def isCollision(objX, objY, bulletX, bulletY):
     distance = math.sqrt(math.pow(objX - bulletX, 2) + (math.pow(objY - bulletY, 2)))
-    if distance < 27:
-        return True
-    else:
-        return False
+    return distance < 27
 
 def show_health_bar(x, y, health, is_player=True):
     if is_player:
@@ -138,17 +132,56 @@ def show_health_bar(x, y, health, is_player=True):
         pygame.draw.rect(screen, (255, 255, 255), (x, y, 50, 5))  # White background
         pygame.draw.rect(screen, (255, 0, 0), (x, y, health, 5))  # Red foreground
 
+def create_button(text, x, y, width, height):
+    button_color = (255, 255, 255)
+    button_rect = pygame.Rect(x, y, width, height)
+    pygame.draw.rect(screen, button_color, button_rect)
+    button_text = small_font.render(text, True, (0, 0, 0))
+    text_rect = button_text.get_rect(center=button_rect.center)
+    screen.blit(button_text, text_rect)
+    return button_rect
+
+def handle_button_click(button_rect, action):
+    mouse_pos = pygame.mouse.get_pos()
+    if button_rect.collidepoint(mouse_pos) and pygame.mouse.get_pressed()[0]:
+        return action
+    return None
+
 # Create a Clock object to manage the frame rate
 clock = pygame.time.Clock()
 
 # Game Loop
 running = True
 game_over = False
+game_started = False
+
+# Main Menu
+def main_menu():
+    screen.fill((0, 0, 0))  # Fill the screen with black
+    menu_text = over_font.render("Covid Killer", True, (255, 255, 255))
+    screen.blit(menu_text, (200, 250))
+    start_button = create_button("Start", 150, 350, 200, 50)
+    quit_button = create_button("Quit", 450, 350, 200, 50)
+    pygame.display.update()
+    return start_button, quit_button
 
 while running:
 
     # Limit the frame rate to 60 frames per second
     clock.tick(60)
+
+    # Main Menu
+    if not game_started:
+        start_button, quit_button = main_menu()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        if handle_button_click(start_button, "start") == "start":
+            game_started = True
+        if handle_button_click(quit_button, "quit") == "quit":
+            running = False
+        continue
 
     # RGB = Red, Green, Blue
     screen.fill((0, 0, 0))
@@ -158,27 +191,27 @@ while running:
     if game_over:
         if score_value > high_score:
             high_score = score_value
-        game_over_screen()
+        restart_button, quit_button = game_over_screen()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_r:
-                    # Restart the game
-                    game_over = False
-                    score_value = 0
-                    player_health = 100
-                    playerX = 370
-                    playerY = 480
-                    enemyX = [random.randint(0, 736) for _ in range(num_of_enemies)]
-                    enemyY = [random.randint(50, 150) for _ in range(num_of_enemies)]
-                    enemy_health = [50 for _ in range(num_of_enemies)]
-                    bullet_state = "ready"
-                    bulletY = 480
-                    enemy_bullet_state = ["ready" for _ in range(num_of_enemies)]
-                    enemy_last_fire_time = [0 for _ in range(num_of_enemies)]
-                if event.key == pygame.K_q:
-                    running = False
+
+        if handle_button_click(restart_button, "restart") == "restart":
+            # Restart the game
+            game_over = False
+            score_value = 0
+            player_health = 100
+            playerX = 370
+            playerY = 480
+            enemyX = [random.randint(0, 736) for _ in range(num_of_enemies)]
+            enemyY = [random.randint(50, 150) for _ in range(num_of_enemies)]
+            enemy_health = [50 for _ in range(num_of_enemies)]
+            bullet_state = "ready"
+            bulletY = 480
+            enemy_bullet_state = ["ready" for _ in range(num_of_enemies)]
+            enemy_last_fire_time = [0 for _ in range(num_of_enemies)]
+        if handle_button_click(quit_button, "quit") == "quit":
+            running = False
         continue
 
     for event in pygame.event.get():
@@ -195,7 +228,6 @@ while running:
                 if bullet_state == "ready":
                     current_time = pygame.time.get_ticks()
                     if current_time - player_last_fire_time > player_fire_rate:
-                        # Get the current x coordinate of the spaceship
                         bulletX = playerX
                         fire_bullet(bulletX, bulletY)
                         player_last_fire_time = current_time
@@ -204,17 +236,20 @@ while running:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 playerX_change = 0
 
+    # Checking for boundaries of spaceship so it doesn't go out of bounds
     playerX += playerX_change
     if playerX <= 0:
         playerX = 0
     elif playerX >= 736:
         playerX = 736
 
-    # Enemy Movement and Firing
+    # Enemy Movement
     for i in range(num_of_enemies):
 
         # Game Over
         if enemyY[i] > 440:
+            for j in range(num_of_enemies):
+                enemyY[j] = 2000
             game_over = True
             break
 
@@ -226,41 +261,29 @@ while running:
             enemyX_change[i] = -enemy_speed
             enemyY[i] += enemyY_change[i]
 
-        # Enemy Bullet Movement
-        if enemy_bullet_state[i] == "fire":
-            fire_enemy_bullet(enemy_bulletX[i], enemy_bulletY[i], i)
-            enemy_bulletY[i] += enemy_bulletY_change
-        if enemy_bulletY[i] > 600:
-            enemy_bullet_state[i] = "ready"
-            enemy_bulletY[i] = enemyY[i]
-
-        # Enemy Firing Logic
+        # Fire enemy bullet
         current_time = pygame.time.get_ticks()
-        if enemy_bullet_state[i] == "ready" and current_time - enemy_last_fire_time[i] > enemy_fire_rate:
-            enemy_bulletX[i] = enemyX[i]
-            fire_enemy_bullet(enemy_bulletX[i], enemy_bulletY[i], i)
-            enemy_last_fire_time[i] = current_time
+        if current_time - enemy_last_fire_time[i] > enemy_fire_rate:
+            if enemy_bullet_state[i] == "ready":
+                enemy_bulletX[i] = enemyX[i]
+                enemy_bulletY[i] = enemyY[i]
+                fire_enemy_bullet(enemy_bulletX[i], enemy_bulletY[i], i)
+                enemy_last_fire_time[i] = current_time
 
-        # Collision with Player
-        if isCollision(playerX, playerY, enemy_bulletX[i], enemy_bulletY[i]):
-            enemy_bullet_state[i] = "ready"
-            enemy_bulletY[i] = enemyY[i]
-            player_health -= 10
-            if player_health <= 0:
-                game_over = True
-
-        # Collision with Bullet
+        # Collision
         collision = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
         if collision:
             bulletY = 480
             bullet_state = "ready"
-            enemy_health[i] -= 20
-            if enemy_health[i] <= 0:
-                score_value += 1
+            score_value += 1
+            enemy_health[i] -= 10  # Reduce enemy health by 10 on collision
+            if enemy_health[i] <= 0:  # If enemy health is 0 or less
                 enemyX[i] = random.randint(0, 736)
                 enemyY[i] = random.randint(50, 150)
-                enemy_health[i] = 50
+                enemy_health[i] = 50  # Reset enemy health to 50
+                enemy_speed += 0.1  # Increase speed slightly
 
+        # Draw enemy and health bar
         enemy(enemyX[i], enemyY[i], i)
         show_health_bar(enemyX[i], enemyY[i] - 10, enemy_health[i], is_player=False)
 
@@ -273,7 +296,28 @@ while running:
         fire_bullet(bulletX, bulletY)
         bulletY -= bulletY_change
 
+    # Enemy Bullet Movement
+    for i in range(num_of_enemies):
+        if enemy_bulletY[i] >= 600:
+            enemy_bulletY[i] = enemyY[i]
+            enemy_bullet_state[i] = "ready"
+
+        if enemy_bullet_state[i] == "fire":
+            fire_enemy_bullet(enemy_bulletX[i], enemy_bulletY[i], i)
+            enemy_bulletY[i] += enemy_bulletY_change
+
+        # Check for collision with player
+        player_collision = isCollision(playerX, playerY, enemy_bulletX[i], enemy_bulletY[i])
+        if player_collision:
+            enemy_bulletY[i] = enemyY[i]
+            enemy_bullet_state[i] = "ready"
+            player_health -= 10  # Reduce player health by 10 on collision
+            if player_health <= 0:  # If player health is 0 or less
+                game_over = True
+
     player(playerX, playerY)
-    show_health_bar(playerX, playerY + 70, player_health)
+    show_health_bar(playerX, playerY - 20, player_health)
+
     show_score(textX, textY)
+    show_high_score(textX, textY + 40)
     pygame.display.update()
