@@ -53,7 +53,7 @@ player_last_fire_time = 0
 player_fire_rate = 200  # Reduced fire rate to make it faster
 
 # Enemy Bullet
-enemy_bulletImg = pygame.image.load('weather.png')
+enemy_bulletImg = pygame.image.load('covidbullet.png')
 enemy_bulletX = []
 enemy_bulletY = []
 enemy_bulletX_change = 0
@@ -155,15 +155,37 @@ running = True
 game_over = False
 game_started = False
 
+# Add this function to show the controls screen
+def controls_screen():
+    screen.fill((0, 0, 0))  # Fill the screen with black
+    controls_text = over_font.render("Controls", True, (255, 255, 255))
+    screen.blit(controls_text, (300, 100))
+
+    control_instructions = [
+        "Use Left and Right Arrow Keys to Move",
+        "Press Space to Fire",
+        "Destroy the Enemies to Earn Points",
+        "Avoid Enemy Bullets"
+    ]
+    
+    for i, line in enumerate(control_instructions):
+        instruction_text = small_font.render(line, True, (255, 255, 255))
+        screen.blit(instruction_text, (100, 200 + i * 40))
+
+    back_button = create_button("Back", 300, 400, 200, 50)
+    pygame.display.update()
+    
+    return back_button
 # Main Menu
 def main_menu():
     screen.fill((0, 0, 0))  # Fill the screen with black
     menu_text = over_font.render("Covid Killer", True, (255, 255, 255))
-    screen.blit(menu_text, (200, 250))
-    start_button = create_button("Start", 150, 350, 200, 50)
-    quit_button = create_button("Quit", 450, 350, 200, 50)
+    screen.blit(menu_text, (220, 100))
+    start_button = create_button("Start", 260, 230, 300, 50)
+    controls_button = create_button("Controls",260,300,300,50) 
+    quit_button = create_button("Quit", 260, 370, 300, 50)
     pygame.display.update()
-    return start_button, quit_button
+    return start_button,controls_button,quit_button 
 
 while running:
 
@@ -172,13 +194,27 @@ while running:
 
     # Main Menu
     if not game_started:
-        start_button, quit_button = main_menu()
+        start_button, controls_button, quit_button = main_menu()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
         if handle_button_click(start_button, "start") == "start":
             game_started = True
+        elif handle_button_click(controls_button, "controls") == "controls":
+            back_button = controls_screen()
+            in_controls_screen = True
+            while in_controls_screen:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        running = False
+                        in_controls_screen = False
+                    
+                    # Handle "Back" button click to return to the main menu
+                    if handle_button_click(back_button, "back") == "back":
+                        in_controls_screen = False
+                continue
+
         if handle_button_click(quit_button, "quit") == "quit":
             running = False
         continue
