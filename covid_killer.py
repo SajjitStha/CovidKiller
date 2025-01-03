@@ -158,25 +158,39 @@ game_started = False
 # Add this function to show the controls screen
 def controls_screen():
     screen.fill((0, 0, 0))  # Fill the screen with black
-    controls_text = over_font.render("Controls", True, (255, 255, 255))
+
+    
+
+    # Title with a larger font and a different color
+    controls_text = over_font.render("Controls", True, (255, 215, 0))  # Gold color for the title
     screen.blit(controls_text, (300, 100))
 
     control_instructions = [
-        "Movement : <-&-> Arrow Keys to Move",
+        "Movement: <- & -> Arrow Keys to Move",
         "Press Space to Fire",
         "Destroy the Enemies to Earn Points",
         "Avoid Enemy Bullets"
     ]
     
+    instruction_color = (255, 255, 255)  # White color for instructions
     for i, line in enumerate(control_instructions):
-        instruction_text = small_font.render(line, True, (255, 255, 255))
+        instruction_text = small_font.render(line, True, instruction_color)
         screen.blit(instruction_text, (100, 200 + i * 40))
 
+    # Create a back button with hover effect
     back_button = create_button("Back", 300, 400, 200, 50)
+    
+    # Draw a border around the button
+    pygame.draw.rect(screen, (0, 255, 0), back_button, 3)  # Green border
+
+    # Check for mouse hover to change button color
+    mouse_pos = pygame.mouse.get_pos()
+    if back_button.collidepoint(mouse_pos):
+        pygame.draw.rect(screen, (0, 200, 0), back_button)  # Darker green when hovered
+
     pygame.display.update()
     
-    return back_button
-# Main Menu
+    return back_button# Main Menu
 def main_menu():
     screen.fill((0, 0, 0))  # Fill the screen with black
     menu_text = over_font.render("Covid Killer", True, (255, 255, 255))
@@ -350,7 +364,7 @@ while running:
             player_health -= 10  # Reduce player health by 10 on collision
             if player_health <= 0:  # If player health is 0 or less
                 game_over = True
-
+    
     player(playerX, playerY)
     show_health_bar(playerX, playerY - 20, player_health)
 
