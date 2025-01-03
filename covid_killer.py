@@ -162,7 +162,7 @@ def controls_screen():
     screen.blit(controls_text, (300, 100))
 
     control_instructions = [
-        "Use Left and Right Arrow Keys to Move",
+        "Movement : <-&-> Arrow Keys to Move",
         "Press Space to Fire",
         "Destroy the Enemies to Earn Points",
         "Avoid Enemy Bullets"
